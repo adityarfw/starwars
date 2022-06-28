@@ -7,8 +7,9 @@ function App() {
   const [selectedCharacter, setSelectedCharacter] = useState('');
   const [spinner, setSpinner] = useState(false);
   const [films, setFilms] = useState([]);
-  //const [charfilms, setCharFilms] = useState({});
+  //const [characterFilms, setCharacterFilms] = useState([]);
 
+  // List of films in which the character was seen
   const charfilms = [];
 
   console.log('Selected Character: ', selectedCharacter);
@@ -22,20 +23,17 @@ function App() {
       setAllCharacters(data.results);
       setSpinner(false);
     };
-
     fetchCharacters().catch(console.error);
   }, []);
 
-  const getFilmInfo = (furl) => {
-    console.log('getFilmInfo ', furl);
-    furl.map((url) => {
-      const fetchFilms = async () => {
-        const res = await fetch('url');
-        const data = await res.json();
-        console.log(`Fetched: ${url} ${data.results}`);
-      };
-      fetchFilms().catch(console.error);
-    });
+  const getFilmInfo = (filmURL) => {
+    const fetchFilms = async () => {
+      const res = await fetch(filmURL);
+      const data = await res.json();
+      console.log(`Fetched: ${filmURL} ${data.title}`);
+      return data.title;
+    };
+    fetchFilms().catch(console.error);
   };
 
   return (
@@ -68,27 +66,20 @@ function App() {
 
         <h2 className='section'>List of Movies</h2>
         {!spinner ? (
-          ''
+          <div className='display--movie--list'>
+            {charfilms.map((item, idx) => {
+              return <p key={idx}>{item}</p>;
+              item.map((url, idx) => {
+                getFilmInfo(url);
+              });
+            })}
+          </div>
         ) : (
           <Spinner animation='border' role='status'>
             <span className='visually-hidden'>Loading...</span>
           </Spinner>
         )}
 
-        <div className='display--movie--list'>
-          {charfilms.map((item) => {
-            item.map((url, idx) => {
-              console.log(url);
-              return (
-                <ol>
-                  <li key={idx}>{url}</li>
-                </ol>
-              );
-
-              // return <p key={idx}>{url}</p>;
-            });
-          })}
-        </div>
         <h2 className='section'>Name / Year last Movie</h2>
         <p className='movie--year'>Revenge of the Sith - 2005</p>
       </div>
