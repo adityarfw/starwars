@@ -7,10 +7,12 @@ function App() {
   const [selectedCharacter, setSelectedCharacter] = useState('');
   const [spinner, setSpinner] = useState(false);
   const [films, setFilms] = useState([]);
-  //const [characterFilms, setCharacterFilms] = useState([]);
 
   // List of films in which the character was seen
-  const charfilms = [];
+  const Charfilms = [];
+
+  // Store film names to display after fetching
+  const CharFilmNames = [];
 
   console.log('Selected Character: ', selectedCharacter);
 
@@ -31,9 +33,10 @@ function App() {
       const res = await fetch(filmURL);
       const data = await res.json();
       console.log(`Fetched: ${filmURL} ${data.title}`);
-      return data.title;
+      CharFilmNames.push(data.title);
     };
     fetchFilms().catch(console.error);
+    return;
   };
 
   return (
@@ -58,22 +61,24 @@ function App() {
           <option>--Select a Character--</option>
           {allcharacters.map((char) => {
             if (selectedCharacter === char.name) {
-              charfilms.push(char.films);
+              Charfilms.push(char.films);
             }
             return <option key={char.url}>{char.name}</option>;
           })}
         </select>
 
         <h2 className='section'>List of Movies</h2>
+        {Charfilms.map((item) => {
+          item.map((url) => {
+            getFilmInfo(url);
+          });
+        })}
+
         {!spinner ? (
-          <div className='display--movie--list'>
-            {charfilms.map((item, idx) => {
-              return <p key={idx}>{item}</p>;
-              item.map((url, idx) => {
-                getFilmInfo(url);
-              });
-            })}
-          </div>
+          //console.log('Movie Namesss', CharFilmNames)
+          CharFilmNames.map((film, idx) => {
+            return <p key={idx}>{film}</p>;
+          })
         ) : (
           <Spinner animation='border' role='status'>
             <span className='visually-hidden'>Loading...</span>
